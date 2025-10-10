@@ -1,0 +1,9 @@
+/node_modules
+/.vscode
+/.idea
+.env
+.dev.env
+/public/uploads/
+/src/config/config.json
+package-lock.json
+/logs
