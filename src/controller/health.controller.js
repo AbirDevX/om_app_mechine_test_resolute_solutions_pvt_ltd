@@ -1,7 +1,6 @@
-const { logInfo, logError } = require("../utility/logger/logger.utility");
-const { sequelize } = require("../models");
 const os = require('os');
 const pkg = require('../../package.json');
+const connectToMongoDb = require("../config/mongo.config");
 
 exports.healthCheck = async (req, res) => {
     try {
@@ -40,7 +39,7 @@ exports.healthCheck = async (req, res) => {
         
         // Database health check
         try {
-            await sequelize.authenticate();
+            await connectToMongoDb();
             healthData.checks.database = {
                 status: 'up',
                 message: 'Database connection successful',
@@ -104,18 +103,10 @@ exports.healthCheck = async (req, res) => {
                           healthData.status === 'degraded' ? 200 :
                           503;
         
-        // Log health check (only if not healthy)
-        if (healthData.status !== 'healthy') {
-            logError('Health check failed', new Error('System unhealthy'), {
-                status: healthData.status,
-                checks: healthData.checks
-            });
-        }
         
         return res.status(statusCode).json(healthData);
         
     } catch (error) {
-        logError("Health Check Error", error);
         
         return res.status(503).json({
             status: 'unhealthy',

@@ -1,9 +1,6 @@
-const { User } = require("../../models");
 const { generateHashPassword, checkHashPassword } = require("../../service/hash/hash.service");
 const { generateAccessToken, generateRefreshToken } = require("../../service/jwt/jwt.service");
 const { HttpException } = require("../../utility/exception/httpException");
-const { Op } = require('sequelize');
-const { logError } = require("../../utility/logger/logger.utility");
 
 exports.register = async (req, res) => {
     try {
@@ -75,7 +72,6 @@ exports.register = async (req, res) => {
         });
 
     } catch (error) {
-        logError("User Registration", error?.message);
 
         const status = error?.status || 500;
         const message = error?.message || "INTERNAL_SERVER_ERROR";
@@ -149,7 +145,6 @@ exports.login = async (req, res) => {
         });
 
     } catch (error) {
-        logError("User Login", error?.message);
 
         const status = error?.status || 500;
         const message = error?.message || "INTERNAL_SERVER_ERROR";
@@ -223,7 +218,6 @@ exports.refreshToken = async (req, res) => {
         });
 
     } catch (error) {
-        logError("Token Refresh", error?.message);
 
         return res.status(500).json({
             success: false,

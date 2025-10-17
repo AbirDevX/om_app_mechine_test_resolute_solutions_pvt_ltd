@@ -8,15 +8,15 @@ const defaultRoutes = [
         prefix: "/auth",
         route: require("./auth/auth.route")
     },
-    {
-        prefix: "/product",
-        route: require("./product/product.route")
-    },
-    {
-        prefix: "/order",
-        route: require("./order/order.route"),
-        middleware: isAuthorizedUserMiddleware
-    }
+    // {
+    //     prefix: "/product",
+    //     route: require("./product/product.route")
+    // },
+    // {
+    //     prefix: "/order",
+    //     route: require("./order/order.route"),
+    //     middleware: isAuthorizedUserMiddleware
+    // }
 ];
 
 defaultRoutes.forEach((route) => {
