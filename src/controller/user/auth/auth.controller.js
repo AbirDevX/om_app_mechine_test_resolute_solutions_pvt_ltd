@@ -1,8 +1,8 @@
-const User = require('../../schema/User'); // Import your Mongoose User model
-const { generateHashPassword, checkHashPassword } = require("../../service/hash/hash.service");
-const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require("../../service/jwt/jwt.service");
-const { USER_ROLE_ENUM } = require('../../utility/enum/enum');
-const { HttpException } = require("../../utility/exception/httpException");
+const User = require('../../../schema/User'); // Import your Mongoose User model
+const { generateHashPassword, checkHashPassword } = require("../../../service/hash/hash.service");
+const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require("../../../service/jwt/jwt.service");
+const { USER_ROLE_ENUM } = require('../../../utility/enum/enum');
+const { HttpException } = require("../../../utility/exception/httpException");
 
 
 exports.register = async (req, res) => {

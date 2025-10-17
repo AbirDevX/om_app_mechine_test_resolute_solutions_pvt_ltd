@@ -1,4 +1,4 @@
-const { HttpException } = require("../../utility/exception/httpException");
+const { HttpException } = require("../../../utility/exception/httpException");
 
 exports.create = async (req, res) => {
     const transaction = await sequelize.transaction();
