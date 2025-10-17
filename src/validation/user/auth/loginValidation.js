@@ -8,6 +8,15 @@ const loginValidation = (schema) => {
                 convert: true
             };
 
+            if (!req.body || Object.keys(req.body).length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Request body is required',
+                    status_code: 400,
+                    error: 'empty_request_body'
+                });
+            }
+
             // Validate and sanitize query parameters
             const validated = await schema.validateAsync(req.body, options);
 
