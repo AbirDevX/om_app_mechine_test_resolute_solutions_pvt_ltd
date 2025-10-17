@@ -12,7 +12,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "dotenvx run -- nodemon index.js",
-    "start": "dotenvx run -- node index.js"
+    "start": "dotenvx run -- node index.js",
+    "seeder": "node src/seeders/masterSeeder.js",
+    "seed:users": "node src/seeders/userSeeder.js",
+    "seed:products": "node src/seeders/productSeeder.js",
+    "seed:all": "node src/seeders/masterSeeder.js",
+    "seed:clear": "node src/seeders/clearDatabase.js",
+    "db:fresh": "npm run seed:clear && npm run seed:all",
+    "db:reset": "npm run seed:clear && npm run seed:users && npm run seed:products"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.51.0",
