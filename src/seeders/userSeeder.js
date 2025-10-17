@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('../schema/User'); // Adjust path as needed
 const connectToMongoDb = require('../config/mongo.config');
+const { generateHashPassword } = require('../service/hash/hash.service');
 require('dotenv').config();
 
 // MongoDB connection function
@@ -17,20 +18,11 @@ const connectDB = async () => {
     }
 };
 
-// Hash password helper
-const hashPassword = async (password) => {
-    try {
-        return await bcrypt.hash(password, 10);
-    } catch (error) {
-        console.error('❌ Password hashing failed:', error);
-        throw error;
-    }
-};
 
 // Sample user data with different roles and statuses
 const getUsersData = async () => {
-    const defaultPassword = await hashPassword('password123');
-    const adminPassword = await hashPassword('admin123');
+    const defaultPassword = await generateHashPassword('password123');
+    const adminPassword = await generateHashPassword('admin123');
 
     return [
         // Admin Users

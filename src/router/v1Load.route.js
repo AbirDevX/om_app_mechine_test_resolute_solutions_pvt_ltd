@@ -5,18 +5,13 @@ const v1MainLoadRouter = express.Router();
 
 const defaultRoutes = [
     {
-        prefix: "/auth",
-        route: require("./auth/auth.route")
+        prefix: "/user",
+        route: require("./user/userLoad.route")
     },
-    // {
-    //     prefix: "/product",
-    //     route: require("./product/product.route")
-    // },
-    // {
-    //     prefix: "/order",
-    //     route: require("./order/order.route"),
-    //     middleware: isAuthorizedUserMiddleware
-    // }
+    {
+        prefix: "/admin",
+        route: require("./admin/adminLoad.route")
+    },
 ];
 
 defaultRoutes.forEach((route) => {

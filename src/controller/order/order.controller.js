@@ -1,5 +1,3 @@
-const { logError } = require("../../utility/logger/logger.utility");
-const { sequelize, Product, Order, OrderItem } = require("../../models");
 const { HttpException } = require("../../utility/exception/httpException");
 
 exports.create = async (req, res) => {

@@ -1,6 +1,3 @@
-const { logError, logInfo } = require("../../utility/logger/logger.utility");
-const { Op } = require('sequelize');
-const { Product } = require("../../models");
 const { HttpException } = require("../../utility/exception/httpException");
 
 
