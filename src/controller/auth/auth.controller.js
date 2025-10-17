@@ -1,44 +1,41 @@
+const User = require('../../schema/User'); // Import your Mongoose User model
 const { generateHashPassword, checkHashPassword } = require("../../service/hash/hash.service");
-const { generateAccessToken, generateRefreshToken } = require("../../service/jwt/jwt.service");
+const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require("../../service/jwt/jwt.service");
+const { USER_ROLE_ENUM } = require('../../utility/enum/enum');
 const { HttpException } = require("../../utility/exception/httpException");
+
 
 exports.register = async (req, res) => {
     try {
-        const { full_name, username, email, mobile, password } = req.body;
+        const payload = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({
-            where: {
-                [Op.or]: [
-                    { email: email },
-                    { username: username },
-                    ...(mobile ? [{ mobile: mobile }] : [])
-                ],
-                is_deleted: 0
-            }
+            $and: [
+                {
+                    $or: [
+                        { email: payload?.email }
+                    ]
+                },
+                { isDeleted: 0 }
+            ]
         });
 
         if (existingUser) {
-            let conflictField = '';
-            if (existingUser.email === email) conflictField = 'Email';
-            else if (existingUser.username === username) conflictField = 'Username';
-            else if (existingUser.mobile === mobile) conflictField = 'Mobile';
-
-            throw new HttpException(409, `${conflictField} already exists`);
+            throw new HttpException(409, `Email already exists`);
         }
 
         // Hash password
-        const hashedPassword = await generateHashPassword(password);
+        const hashedPassword = await generateHashPassword(payload?.password);
 
         // Create user
         const newUser = await User.create({
-            full_name,
-            username,
-            email,
-            mobile: mobile || null,
+            fullName: payload?.full_name,
+            email: payload?.email,
             password: hashedPassword,
+            role: USER_ROLE_ENUM.USER,
             status: 1,
-            is_deleted: 0
+            isDeleted: 0
         });
 
         // Generate tokens
@@ -47,13 +44,12 @@ exports.register = async (req, res) => {
 
         // Remove password from response
         const userResponse = {
-            id: newUser.id,
-            full_name: newUser.full_name,
-            username: newUser.username,
+            id: newUser._id,
+            fullName: newUser.fullName,
             email: newUser.email,
-            mobile: newUser.mobile,
+            role: newUser.role,
             status: newUser.status,
-            created_at: newUser.created_at
+            createdAt: newUser.createdAt
         };
 
         return res.status(201).json({
@@ -72,7 +68,7 @@ exports.register = async (req, res) => {
         });
 
     } catch (error) {
-
+        // Handle MongoDB duplicate key error
         const status = error?.status || 500;
         const message = error?.message || "INTERNAL_SERVER_ERROR";
 
@@ -88,45 +84,44 @@ exports.login = async (req, res) => {
     try {
         const { identifier, password } = req.body;
 
-        // Check if identifier is email or username
-        const isEmail = identifier.includes('@');
-        const whereCondition = {
-            [isEmail ? 'email' : 'username']: identifier,
+        whereCondition = {
+            email: identifier,
             status: 1,
-            is_deleted: 0
+            isDeleted: 0
         };
 
         // Find user
-        const user = await User.findOne({
-            where: whereCondition
-        });
+        const user = await User.findOne(whereCondition);
 
-        if (!user) throw new HttpException(400, "Invalid credentials");
+        if (!user) {
+            throw new HttpException(401, "Invalid credentials");
+        }
 
         // Check password
         const isPasswordValid = await checkHashPassword(password, user.password);
 
-        if (!isPasswordValid) throw new HttpException(401, "Invalid credentials");
+        if (!isPasswordValid) {
+            throw new HttpException(401, "Invalid credentials");
+        }
 
         // Generate tokens
         const accessToken = await generateAccessToken(user);
         const refreshToken = await generateRefreshToken(user);
 
         // Update last login (optional)
-        await user.update({
-            updated_at: new Date()
+        await User.findByIdAndUpdate(user._id, {
+            updatedAt: new Date()
         });
 
         // Remove password from response
         const userResponse = {
-            id: user.id,
-            full_name: user.full_name,
-            username: user.username,
+            id: user._id,
+            fullName: user.fullName,
             email: user.email,
-            mobile: user.mobile,
+            role: user.role,
             status: user.status,
-            created_at: user.created_at,
-            updated_at: user.updated_at
+            createdAt: user.createdAt,
+            updatedAt: new Date()
         };
 
         return res.status(200).json({
@@ -145,7 +140,6 @@ exports.login = async (req, res) => {
         });
 
     } catch (error) {
-
         const status = error?.status || 500;
         const message = error?.message || "INTERNAL_SERVER_ERROR";
 
@@ -182,12 +176,11 @@ exports.refreshToken = async (req, res) => {
             });
         }
 
-        // Find user
-        const user = await User.findByPk(tokenResult.data.sub, {
-            where: {
-                status: 1,
-                is_deleted: 0
-            }
+        // Find user by MongoDB ObjectId
+        const user = await User.findOne({
+            _id: tokenResult.data.sub,
+            status: 1,
+            isDeleted: 0
         });
 
         if (!user) {
@@ -218,7 +211,25 @@ exports.refreshToken = async (req, res) => {
         });
 
     } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "INTERNAL_SERVER_ERROR",
+            status_code: 500
+        });
+    }
+};
 
+exports.logout = async (req, res) => {
+    try {
+        // In a production app, you'd typically blacklist the token
+        // or store it in a revoked tokens list
+
+        return res.status(200).json({
+            success: true,
+            message: "Logout successful",
+            status_code: 200
+        });
+    } catch (error) {
         return res.status(500).json({
             success: false,
             message: "INTERNAL_SERVER_ERROR",

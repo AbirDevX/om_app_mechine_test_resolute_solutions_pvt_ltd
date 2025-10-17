@@ -2,8 +2,10 @@ const jwt = require('jsonwebtoken');
 
 exports.generateAccessToken = async (user) => {
     const payload = {
-        sub: user.id,
-        created_at: user.created_at,
+        sub: user._id,
+        email: user?.email,
+        role: user?.role,
+        created_at: user.createdAt,
     };
 
     const secret = process.env.JWT_ACCESS_TOKEN_SECRET;
@@ -13,8 +15,10 @@ exports.generateAccessToken = async (user) => {
 };
 exports.generateRefreshToken = async (user) => {
     const payload = {
-        sub: user.id,
-        created_at: user.created_at,
+        sub: user._id, 
+        email: user?.email,
+        role: user?.role,
+        created_at: user.createdAt,
     };
 
     const secret = process.env.JWT_REFRESH_TOKEN_SECRET;
