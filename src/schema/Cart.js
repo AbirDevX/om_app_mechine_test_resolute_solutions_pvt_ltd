@@ -10,7 +10,7 @@ const cartSchema = new Schema({
   },
   status: {
     type: Number,
-    enum: [0, 1, 2], // 0: abandoned, 1: active, 2: converted
+    enum: [0, 1], // 0: inactive, 1: active
     default: 1
   }
 }, {
