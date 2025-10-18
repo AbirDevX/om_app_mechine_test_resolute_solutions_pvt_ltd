@@ -12,6 +12,11 @@ const defaultRoutes = [
         prefix: "/product-manage",
         route: require("./productManage/productManage.route"),
         middleware: isAdminMiddleware
+    },
+    {
+        prefix: "/order-manage",
+        route: require("./orderManage/orderManage.route"),
+        middleware: isAdminMiddleware
     }
 ];
 
