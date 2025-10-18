@@ -1,8 +1,8 @@
-Here's a comprehensive README file for your **Transactional Order Management API** project :[1][2][3]
+Perfect! Now I can create a comprehensive README.md based on your **Task-2** requirements and actual Postman collection endpoints. Here's the updated final README file:
 
-# **Transactional Order Management API**
+# **🛒 E-Commerce Order Management API (OMAPP)**
 
-A robust Node.js/Express.js API for order management with atomic transaction handling, built with **Sequelize ORM** and **MySQL**. This API demonstrates advanced database transaction patterns, JWT authentication, and comprehensive validation using Joi.
+A comprehensive Node.js/Express.js REST API for e-commerce order management with **atomic transaction handling**, built with **MongoDB** and **Mongoose**. Features complete cart management, order processing, payment simulation, inventory reservation system, and admin dashboard capabilities.
 
 ## **📋 Table of Contents**
 
@@ -10,85 +10,60 @@ A robust Node.js/Express.js API for order management with atomic transaction han
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Database Setup](#database-setup)
 - [Environment Configuration](#environment-configuration)
+- [Database Setup](#database-setup)
 - [Running the Application](#running-the-application)
 - [API Endpoints](#api-endpoints)
+- [System Workflow](#system-workflow)
 - [Database Schema](#database-schema)
-- [Testing](#testing)
+- [Testing with Postman](#testing-with-postman)
 - [Project Structure](#project-structure)
 - [Key Implementation Details](#key-implementation-details)
-- [Postman Collection](#postman-collection)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## **🎯 Features**
 
-- ✅ **Atomic Transaction Management** - All order operations use database transactions with automatic rollback
-- ✅ **Stock Management** - Real-time stock validation and decrement during order creation
-- ✅ **JWT Authentication** - Secure user registration, login, and protected routes
-- ✅ **Comprehensive Validation** - Request/response validation using Joi schemas
-- ✅ **Error Handling** - Production-grade error handling with Winston logging
-- ✅ **CRUD Operations** - Complete product and order management
-- ✅ **Pagination & Search** - Advanced filtering and search capabilities
-- ✅ **Soft Deletion** - Logical deletion for data integrity
-- ✅ **Database Relationships** - Proper foreign keys and associations
+- ✅ **Atomic Transaction Management** - MongoDB transactions with automatic rollback
+- ✅ **Stock Reservation System** - Real-time inventory locking during checkout
+- ✅ **Multi-Role Authentication** - JWT-based auth for Users and Admins
+- ✅ **Order State Management** - Complete lifecycle from PENDING_PAYMENT to DELIVERED
+- ✅ **Shopping Cart System** - Add, update, remove items with stock validation
+- ✅ **Payment Processing** - Mock payment simulation with 15-minute expiry
+- ✅ **Admin Dashboard** - Order management, status updates, and analytics
+- ✅ **Advanced Pagination & Filtering** - For products and orders
+- ✅ **Production-Grade Validation** - Joi schema validation
+- ✅ **Centralized Error Handling** - Consistent error responses
+- ✅ **API Documentation** - Swagger/OpenAPI integration
 
 ## **🛠 Tech Stack**
 
 - **Runtime**: Node.js 18+
-- **Framework**: Express.js 4.x
-- **Database**: MySQL 8.0+
-- **ORM**: Sequelize 6.x
+- **Framework**: Express.js 5.1.0
+- **Database**: MongoDB with Mongoose 8.19.1
 - **Authentication**: JSON Web Tokens (JWT)
-- **Validation**: Joi 17.x
-- **Logging**: Winston 3.x
-- **Password Hashing**: bcrypt
-- **Environment**: dotenv
-- **Development**: Nodemon
+- **Validation**: Joi 18.0.1
+- **Password Security**: bcrypt 6.0.0
+- **Environment Management**: @dotenvx/dotenvx
+- **API Documentation**: Swagger UI
+- **Development**: Nodemon, Morgan logging
 
 ## **📋 Prerequisites**
 
-Before running this project, ensure you have:
-
-- **Node.js** (version 18.0 or higher)
-- **npm** (version 8.0 or higher)
-- **MySQL** (version 8.0 or higher)
-- **Git**
+- **Node.js** (version 18.0+)
+- **MongoDB** (version 5.0+ with replica set for transactions)
+- **npm** (version 8.0+)
+- **Postman** (for testing)
 
 ## **🚀 Installation**
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/transactional-order-api.git
-   cd transactional-order-api
+   git clone https://github.com/yourusername/omapp.git
+   cd omapp
    ```
 
 2. **Install dependencies**
    ```bash
    npm install
-   ```
-
-3. **Install development dependencies**
-   ```bash
-   npm install --save-dev nodemon
-   ```
-
-## **🗄 Database Setup**
-
-1. **Create MySQL database**
-   ```sql
-   CREATE DATABASE omapp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-   ```
-
-2. **Run migrations**
-   ```bash
-   npx sequelize-cli db:migrate
-   ```
-
-3. **Seed test data** (optional)
-   ```bash
-   npx sequelize-cli db:seed:all
    ```
 
 ## **⚙️ Environment Configuration**
@@ -99,351 +74,478 @@ Create a `.env` file in the root directory:
 # Server Configuration
 PORT=8080
 NODE_ENV=development
-ENABLE_CONSOLE_LOGS=true
 
 # Database Configuration
-DB_USERNAME=root
-DB_PASSWORD=your_mysql_password
-DB_DATABASE=omapp
-DB_CLIENT=mysql
-DB_HOST=localhost
+MONGO_URI=mongodb://localhost:27017/ecommerce_app
 
-# JWT Secrets
-JWT_ACCESS_TOKEN_SECRET=your_super_secure_access_token_secret_here_min_32_chars
-JWT_REFRESH_TOKEN_SECRET=your_super_secure_refresh_token_secret_here_min_32_chars
+# JWT Configuration
+JWT_ACCESS_TOKEN_SECRET=your_super_secure_access_token_secret_min_32_chars
+JWT_REFRESH_TOKEN_SECRET=your_super_secure_refresh_token_secret_min_32_chars
 
-# URLs
+# Application Settings
 CLIENT_SERVER_URL=http://localhost:3000
 SERVER_URL=http://localhost:8080
-
-# Logging
+ENABLE_CONSOLE_LOGS=true
 LOG_LEVEL=info
-SERVICE_NAME=order-management-api
+SERVICE_NAME=omapp
 APP_VERSION=1.0.0
+```
+
+## **🗄 Database Setup**
+
+### **MongoDB Replica Set Setup (Required for Transactions)**
+
+```bash
+# Start MongoDB with replica set
+mongod --replSet rs0 --port 27017
+
+# Initialize replica set in mongo shell
+mongo --port 27017
+> rs.initiate()
+```
+
+### **Seed Database**
+```bash
+# Seed all data (users + products)
+npm run seed:all
+
+# Fresh database setup
+npm run db:fresh
 ```
 
 ## **▶️ Running the Application**
 
-### Development Mode
 ```bash
+# Development mode
 npm run dev
-```
 
-### Production Mode
-```bash
+# Production mode
 npm start
+
+# Database operations
+npm run seed:all        # Seed everything
+npm run db:reset        # Reset database
+npm run seed:clear      # Clear all data
 ```
 
-### Database Operations
-```bash
-# Reset database (migration + seeds)
-npm run db:reset
-
-# Run only seeds
-npm run db:seed
-
-# Undo seeds
-npm run db:seed:undo
-```
+Access the application:
+- **API Base URL**: `http://localhost:8080`
+- **Health Check**: `http://localhost:8080/health`
+- **API Documentation**: `http://localhost:8080/api-docs`
 
 ## **📊 API Endpoints**
 
-### **Authentication**
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/v1/auth/register` | User registration | ❌ |
-| POST | `/api/v1/auth/login` | User login | ❌ |
+Based on your Postman collection, here are the **Task-2** endpoints:
 
-### **Products**
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/v1/product/add` | Create product | ❌ |
-| GET | `/api/v1/product/list` | List products (paginated) | ❌ |
+### **🔑 Authentication**
 
-### **Orders**
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/v1/order/create` | Create order (atomic) | ✔ |
-| GET | `/api/v1/order/list` | List orders with products | ✔ |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/user/auth/register` | User registration |
+| POST | `/api/v1/user/auth/login` | User login |
+| POST | `/api/v1/admin/auth/login` | Admin login |
 
-### **Health Check**
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/health` | API health status | ❌ |
+### **🛍 Product Management (Admin)**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/admin/product-manage/add` | Add new product |
+| PUT | `/api/v1/admin/product-manage/update/:id` | Update product |
+| DELETE | `/api/v1/admin/product-manage/delete/:id` | Delete product |
+| GET | `/api/v1/admin/product-manage/detail/:id` | Get single product |
+| GET | `/api/v1/admin/product-manage/products` | List products (admin) |
+
+### **📦 Product Browsing (User/Public)**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/user/product/list` | List products with filters |
+| GET | `/api/v1/user/product/product/:id` | Get product details |
+
+### **🛒 Shopping Cart (User)**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/user/cart/cart` | View cart contents |
+| POST | `/api/v1/user/cart/add-to-cart` | Add item to cart |
+| PUT | `/api/v1/user/cart/items/:productId` | Update item quantity |
+| DELETE | `/api/v1/user/cart/items/:productId` | Remove cart item |
+| DELETE | `/api/v1/user/cart/clear` | Clear entire cart |
+
+### **📋 Order Management (User)**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/user/order/checkout` | Create order from cart |
+| POST | `/api/v1/user/order/:id/pay` | Process payment |
+| GET | `/api/v1/user/order/list` | User's order history |
+| GET | `/api/v1/user/order/single/:id` | Get single order |
+
+### **👑 Admin Order Management**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/order-manage/list` | List all orders |
+| GET | `/api/v1/admin/order-manage/details/:id` | Order details |
+| PATCH | `/api/v1/admin/order-manage/update/:id/status` | Update order status |
+
+## **🔄 System Workflow**
+
+### **Complete E-Commerce Flow**
+
+1. **User Registration & Authentication**
+   - User registers → receives JWT token
+   - Admin logs in with admin credentials
+
+2. **Product Management**
+   - Admin adds products with stock information
+   - Users browse products with pagination/filtering
+
+3. **Shopping Cart Operations**
+   - User adds products to cart
+   - Real-time stock validation
+   - Cart persistence across sessions
+
+4. **Order Creation & Stock Reservation**
+   - User initiates checkout
+   - **Atomic transaction** reserves stock
+   - Order created with `PENDING_PAYMENT` status
+   - 15-minute payment window starts
+
+5. **Payment Processing**
+   - Mock payment endpoint simulates transaction
+   - Success: Order → `PAID`, stock finalized
+   - Failure: Order → `CANCELLED`, stock released
+
+6. **Order Fulfillment**
+   - Admin updates status: `SHIPPED` → `OUT_FOR_DELIVERY` → `DELIVERED`
+   - Order lifecycle tracking
 
 ## **🗂 Database Schema**
 
-### **Users Table**
-```sql
-- id (Primary Key)
-- full_name
-- username (Unique)
-- email (Unique) 
-- mobile (Unique)
-- password (Hashed)
-- status
-- is_deleted
-- created_at, updated_at
-```
-
-### **Products Table**
-```sql
-- id (Primary Key)
-- name
-- price (DECIMAL 10,2)
-- stock (INTEGER)
-- description
-- status
-- is_deleted
-- created_at, updated_at
-```
-
-### **Orders Table**
-```sql
-- id (Primary Key)
-- user_name
-- user_id (Foreign Key - optional)
-- total_amount (DECIMAL 10,2)
-- order_status (ENUM)
-- payment_status (ENUM)
-- notes
-- is_deleted
-- created_at, updated_at
-```
-
-### **Order Items Table** (Junction)
-```sql
-- id (Primary Key)
-- order_id (Foreign Key)
-- product_id (Foreign Key)
-- qty
-- unit_price (DECIMAL 10,2)
-- total_price (DECIMAL 10,2)
-- created_at, updated_at
-```
-
-## **🧪 Testing**
-
-### **Sample API Calls**
-
-#### **1. Register User**
-```bash
-POST /api/auth/register
-Content-Type: application/json
-
+### **Users Collection**
+```javascript
 {
-  "full_name": "John Doe",
-  "username": "johndoe",
-  "email": "john@example.com",
-  "mobile": "9876543210",
-  "password": "Password@123"
+  _id: ObjectId,
+  fullName: String,
+  email: String (unique),
+  mobile: String (unique),
+  password: String (hashed),
+  role: String ['USER', 'ADMIN'],
+  status: Number (0: inactive, 1: active),
+  isDeleted: Number (0: active, 1: deleted)
 }
 ```
 
-#### **2. Create Product**
-```bash
-POST /api/products
-Authorization: Bearer YOUR_ACCESS_TOKEN
-Content-Type: application/json
+### **Products Collection**
+```javascript
+{
+  _id: ObjectId,
+  name: String,
+  price: Decimal128,
+  totalStock: Number,
+  reservedStock: Number, // For reservation system
+  description: String,
+  status: Number (0: inactive, 1: active),
+  isDeleted: Number
+}
+```
 
+### **Carts Collection**
+```javascript
+{
+  _id: ObjectId,
+  userId: ObjectId (ref: 'User', unique),
+  status: Number (0: abandoned, 1: active, 2: converted)
+}
+```
+
+### **Cart Items Collection**
+```javascript
+{
+  _id: ObjectId,
+  cartId: ObjectId (ref: 'Cart'),
+  productId: ObjectId (ref: 'Product'),
+  quantity: Number,
+  unitPrice: Decimal128,
+  totalPrice: Decimal128
+}
+```
+
+### **Orders Collection**
+```javascript
+{
+  _id: ObjectId,
+  userId: ObjectId (ref: 'User'),
+  totalAmount: Decimal128,
+  orderStatus: String ['PENDING_PAYMENT', 'PAID', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'],
+  notes: String,
+  isDeleted: Number
+}
+```
+
+### **Order Items Collection**
+```javascript
+{
+  _id: ObjectId,
+  orderId: ObjectId (ref: 'Order'),
+  productId: ObjectId (ref: 'Product'),
+  quantity: Number,
+  priceAtPurchase: Decimal128 // Price locked at purchase time
+}
+```
+
+### **Payments Collection**
+```javascript
+{
+  _id: ObjectId,
+  orderId: ObjectId (ref: 'Order'),
+  transactionId: String (unique),
+  amount: Decimal128,
+  status: Number (0: pending, 1: success, 2: failed),
+  paymentMethod: String,
+  paidAt: Date,
+  expiresAt: Date // 15-minute expiry
+}
+```
+
+## **🧪 Testing with Postman**
+
+### **Import the Collection**
+1. Import the provided `OM-APP.postman_collection.json`
+2. Set environment variables:
+   ```
+   BASE_URL = http://localhost:8080
+   ACCESS_TOKEN = (auto-populated after login)
+   ADMIN_TOKEN = (auto-populated after admin login)
+   ```
+
+### **Complete Test Workflow**
+
+#### **1. Admin Setup**
+```bash
+POST /api/v1/admin/auth/login
+{
+  "email": "admin@ecommerce.com",
+  "password": "admin123"
+}
+```
+
+#### **2. Add Products (Admin)**
+```bash
+POST /api/v1/admin/product-manage/add
+Authorization: Bearer {{ADMIN_TOKEN}}
 {
   "name": "iPhone 15 Pro",
-  "price": 129999.00,
-  "stock": 50,
-  "description": "Latest iPhone 15 Pro with 256GB storage"
+  "price": 129999.99,
+  "totalStock": 50,
+  "description": "Latest iPhone with advanced features"
 }
 ```
 
-#### **3. Create Order (Atomic Transaction)**
+#### **3. User Registration**
 ```bash
-POST /api/orders
-Content-Type: application/json
-
+POST /api/v1/user/auth/register
 {
-  "userName": "John Doe",
-  "products": [
-    {
-      "productId": 1,
-      "qty": 2
-    },
-    {
-      "productId": 2,
-      "qty": 1
-    }
-  ],
-  "notes": "Express delivery requested"
+  "fullName": "John Doe",
+  "email": "john@example.com",
+  "mobile": "9876543210",
+  "password": "12345678"
+}
+```
+
+#### **4. User Login**
+```bash
+POST /api/v1/user/auth/login
+{
+  "identifier": "john@example.com",
+  "password": "12345678"
+}
+```
+
+#### **5. Add to Cart**
+```bash
+POST /api/v1/user/cart/add-to-cart
+Authorization: Bearer {{ACCESS_TOKEN}}
+{
+  "productId": "68f3883cb0d05d8b6fc4ae3b",
+  "quantity": 2
+}
+```
+
+#### **6. Checkout Order**
+```bash
+POST /api/v1/user/order/checkout
+Authorization: Bearer {{ACCESS_TOKEN}}
+{
+  "notes": "Express delivery preferred"
+}
+```
+
+#### **7. Process Payment**
+```bash
+POST /api/v1/user/order/{orderId}/pay
+Authorization: Bearer {{ACCESS_TOKEN}}
+{
+  "paymentMethod": "mock"
+}
+```
+
+#### **8. Admin Order Management**
+```bash
+GET /api/v1/admin/order-manage/list?status=PAID&page=1&limit=10
+Authorization: Bearer {{ADMIN_TOKEN}}
+
+PATCH /api/v1/admin/order-manage/update/{orderId}/status
+Authorization: Bearer {{ADMIN_TOKEN}}
+{
+  "status": "SHIPPED",
+  "notes": "Order dispatched via FedEx"
 }
 ```
 
 ## **📁 Project Structure**
 
 ```
-transactional-order-api/
-├── config/
-│   └── database.js              # Database configuration
-├── controllers/
-│   ├── authController.js        # Authentication logic
-│   ├── orderController.js       # Order management
-│   └── productController.js     # Product management
-├── middlewares/
-│   ├── authMiddleware.js        # JWT authentication
-│   └── validation.js            # Request validation
-├── migrations/                  # Database migrations
-│   ├── create-users.js
-│   ├── create-products.js
-│   ├── create-orders.js
-│   └── create-order-items.js
-├── models/
-│   ├── user.js                  # User model
-│   ├── product.js               # Product model
-│   ├── order.js                 # Order model
-│   └── orderItem.js             # Order items model
-├── routes/
-│   ├── authRoutes.js            # Auth endpoints
-│   ├── orderRoutes.js           # Order endpoints
-│   └── productRoutes.js         # Product endpoints
-├── seeders/                     # Test data
-│   ├── demo-users.js
-│   ├── demo-products.js
-│   ├── demo-orders.js
-│   └── demo-order-items.js
-├── services/
-│   ├── hashService.js           # Password hashing
-│   └── jwtService.js            # JWT operations
-├── utility/
-│   ├── exception/
-│   │   └── httpException.js     # Custom exceptions
-│   └── logger/
-│       └── logger.utility.js    # Winston logging
-├── validators/
-│   ├── authValidators.js        # Auth validation schemas
-│   ├── orderValidators.js       # Order validation schemas
-│   └── productValidators.js     # Product validation schemas
-├── logs/                        # Application logs
-├── .env                         # Environment variables
-├── .sequelizerc                 # Sequelize configuration
-├── index.js                     # Application entry point
-└── package.json
+omapp/
+├── src/
+│   ├── config/
+│   │   └── mongo.config.js
+│   ├── controllers/
+│   │   ├── admin/
+│   │   │   ├── adminAuthController.js
+│   │   │   ├── adminProductController.js
+│   │   │   └── adminOrderController.js
+│   │   └── user/
+│   │       ├── userAuthController.js
+│   │       ├── userProductController.js
+│   │       ├── userCartController.js
+│   │       └── userOrderController.js
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Product.js
+│   │   ├── Cart.js & CartItem.js
+│   │   ├── Order.js & OrderItem.js
+│   │   └── Payment.js
+│   ├── routes/
+│   │   ├── admin/
+│   │   └── user/
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   └── validation.js
+│   ├── validators/
+│   ├── seeders/
+│   └── swagger/
+├── .env
+├── package.json
+├── index.js
+└── README.md
 ```
 
 ## **🔧 Key Implementation Details**
 
 ### **Atomic Transactions**
-All order creation operations use Sequelize managed transactions:
 ```javascript
-const transaction = await sequelize.transaction();
+const session = await mongoose.startSession();
 try {
-  // 1. Validate stock availability
+  await session.startTransaction();
+  
+  // 1. Reserve stock
+  await Product.updateMany(
+    { _id: { $in: productIds } },
+    { $inc: { reservedStock: quantities } },
+    { session }
+  );
+  
   // 2. Create order
-  // 3. Create order items  
-  // 4. Decrement product stock
-  await transaction.commit();
+  const order = await Order.create([orderData], { session });
+  
+  // 3. Create payment record
+  await Payment.create([paymentData], { session });
+  
+  await session.commitTransaction();
 } catch (error) {
-  await transaction.rollback();
+  await session.abortTransaction();
   throw error;
 }
 ```
 
-### **Stock Management**
-- Stock validation before order creation
-- Atomic stock decrement using `Product.decrement()`
-- Rollback on insufficient stock
+### **Stock Reservation System**
+- **Available Stock** = `totalStock - reservedStock`
+- **During Checkout**: Stock moves to `reservedStock`
+- **Payment Success**: `reservedStock` decremented, `totalStock` reduced
+- **Payment Failure**: `reservedStock` released back
 
-### **Security Features**
-- Password hashing with bcrypt (salt rounds: 10)
-- JWT tokens (24h access, 30d refresh)
-- Input sanitization (HTML/XSS prevention)
-- SQL injection prevention via Sequelize ORM
+### **Order State Machine**
+```
+PENDING_PAYMENT → PAID → SHIPPED → OUT_FOR_DELIVERY → DELIVERED
+       ↓
+   CANCELLED
+```
+
+### **JWT Authentication**
+- **Access Token**: 24 hours validity
+- **Role-based Access**: User vs Admin permissions
+- **Route Protection**: Middleware validates tokens
+
+## **🌟 Advanced Features**
+
+### **Pagination & Filtering**
+```bash
+GET /api/v1/user/product/list?page=1&limit=10&minPrice=10000&maxPrice=50000&sortBy=price&sortOrder=asc
+```
+
+### **Admin Analytics**
+```bash
+GET /api/v1/admin/order-manage/list?status=PAID&startDate=2024-01-01&endDate=2024-12-31
+```
 
 ### **Error Handling**
-- Global error handlers for uncaught exceptions
-- Winston logging with file rotation
-- Structured error responses
-- Environment-specific error details
-
-## **📮 Postman Collection**
-
-Import the provided `Order_Management_API.postman_collection.json` file into Postman to test all endpoints with:
-- Pre-configured requests
-- Environment variables
-- Authentication tokens
-- Sample test data
-- Error scenario testing
-
-## **🔍 Performance Considerations**
-
-- Database indexes on frequently queried columns
-- Pagination for large datasets
-- Connection pooling for database
-- Efficient Sequelize queries with `attributes` selection
-- Logging with appropriate levels
-
-## **🚦 Environment-Specific Behavior**
-
-### Development
-- Detailed error messages with stack traces
-- Console logging enabled
-- Database query logging
-- Auto-restart with nodemon
-
-### Production
-- Minimal error exposure
-- File-based logging only
-- Error tracking and monitoring
-- PM2 process management (optional)
-
-## **📚 API Response Format**
-
-### Success Response
-```json
-{
-  "success": true,
-  "message": "Operation completed successfully",
-  "status_code": 200,
-  "data": { /* response data */ },
-  "pagination": { /* pagination info */ }
-}
-```
-
-### Error Response
-```json
+```javascript
 {
   "success": false,
-  "message": "Error description",
+  "message": "Insufficient stock. Available: 5, Requested: 10",
   "status_code": 400,
-  "error": "error_code",
-  "errors": [ /* validation errors */ ]
+  "error": "STOCK_INSUFFICIENT"
 }
 ```
+
+## **🚀 Production Considerations**
+
+- **Database Indexes** on frequently queried fields
+- **Connection Pooling** for MongoDB connections
+- **Rate Limiting** for API endpoints
+- **Request Validation** using Joi schemas
+- **Error Logging** with Winston/Morgan
+- **Environment Configuration** with dotenv
+- **API Documentation** with Swagger
+
+## **📝 Testing Coverage**
+
+The Postman collection includes:
+- ✅ Authentication flows (User & Admin)
+- ✅ Product CRUD operations
+- ✅ Complete cart management
+- ✅ End-to-end order workflow
+- ✅ Admin order management
+- ✅ Error scenario testing
+- ✅ Edge cases and validations
 
 ## **🤝 Contributing**
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ## **📄 License**
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## **👨‍💻 Author**
-
-**Abir Santra**
-- GitHub: [@AbirDevX](https://github.com/AbirDevX)
-- LinkedIn: [abir-santra](https://www.linkedin.com/in/abir-santra/)
-- Email: abir.devx@gmail.com
-
-## **🙏 Acknowledgments**
-
-- Assessment requirements provided by the hiring team
-- Express.js and Sequelize documentation
-- Node.js community best practices
-- JWT and bcrypt security standards
+This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
 
 ***
 
-**Made with ❤️ for the technical assessment**
+**Built with ❤️ for scalable e-commerce solutions**
 
-**⚡ Quick Start**: `npm install && npm run db:reset && npm run dev`
+[1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/71118768/106c23aa-77cf-4ae9-917c-3393ad6b8eb2/OM-APP.postman_collection.json)
+[2](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/71118768/725fb89b-2776-471f-9f62-4bfed9a415c0/Node-JS-Task-2.docx)
