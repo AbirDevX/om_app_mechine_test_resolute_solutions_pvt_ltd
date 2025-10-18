@@ -17,6 +17,11 @@ const defaultRoutes = [
         prefix: "/order",
         route: require("./order/order.route"),
         middleware: isAuthorizedUserMiddleware
+    },
+    {
+        prefix: "/cart",
+        route: require("./cart/cart.route"),
+        middleware: isAuthorizedUserMiddleware
     }
 ];
 
