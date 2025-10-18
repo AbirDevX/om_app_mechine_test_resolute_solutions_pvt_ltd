@@ -16,6 +16,7 @@ exports.getCart = async (req, res) => {
         });
 
         if (!cart) {
+
             // Create new cart if none exists
             cart = await Cart.create({
                 userId: userId,

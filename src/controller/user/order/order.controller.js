@@ -121,7 +121,7 @@ exports.checkout = async (req, res) => {
 
         // Clear cart after successful order creation
         await CartItem.deleteMany({ cartId: cart._id }, { session });
-        cart.status = 2; // converted
+        // cart.status = 2; // converted
         await cart.save({ session });
 
         await session.commitTransaction();

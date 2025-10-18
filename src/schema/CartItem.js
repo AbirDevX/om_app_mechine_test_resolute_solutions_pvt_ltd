@@ -46,7 +46,7 @@ cartItemSchema.pre('save', function (next) {
 });
 
 // Compound index for unique cart-product combination
-cartItemSchema.index({ cartId: 1, productId: 1 }, { unique: true });
+// cartItemSchema.index({ cartId: 1, productId: 1 }, { unique: true });
 cartItemSchema.index({ cartId: 1 });
 cartItemSchema.index({ productId: 1 });
 
