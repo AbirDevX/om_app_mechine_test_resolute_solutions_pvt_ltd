@@ -9,5 +9,6 @@ orderRouter.post("/checkout", validateRequest(checkoutSchema), orderController.c
 orderRouter.post("/:id/pay", orderParamValidation(orderIdParamSchema), validateRequest(processPaymentSchema), orderController.processPayment);
 orderRouter.get("/list", orderQueryValidation(orderListQuerySchema), orderController.getUserOrders);
 orderRouter.get("/single/:id", orderParamValidation(orderIdParamSchema), orderController.getOrderById);
+orderRouter.get("/list", orderQueryValidation(orderListQuerySchema), orderController.getUserOrders);
 
 module.exports = orderRouter;
